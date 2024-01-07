@@ -3,12 +3,6 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 
-// ?   displayname:  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,30}$/
-// ?   username:  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,30}$/
-// ?   email:  /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
-// ?   phone:  /^[0][0-9]{10}$/
-// ?   password:  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,24}$/
-
 const RegisterComp = () => {
   const usernameRef = useRef();
   const displaynameRef = useRef();
@@ -58,9 +52,13 @@ const RegisterComp = () => {
               if (formData.password == formData.repassword) {
                 setLastError("");
                 toast.info("please wait ...!");
+              } else {
+                setLastError("*. password and repassword should be the same!");
               }
             } else {
-              setLastError("*. password and repassword should be the same!");
+              setLastError(
+                "*. password should be 8-24 characters long and contain only letters(upper and lower case) and numbers!"
+              );
             }
           } else {
             setLastError("*. email structure is incorrect!");
@@ -85,7 +83,7 @@ const RegisterComp = () => {
       <div className="flex gap-4">
         <h1 className="text-lg font-bold">Register Page</h1>
         <Link
-          className="bg-indigo-400 text-white text-sm rounded px-2 py-1"
+          className="bg-indigo-400 text-white text-sm rounded px-2 py-1 hover:bg-indigo-600"
           href={"/login"}
         >
           login
