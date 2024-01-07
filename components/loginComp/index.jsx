@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { RiArrowRightSLine } from "react-icons/ri";
 import { toast } from "react-toastify";
 
 const LoginComp = () => {
@@ -29,10 +30,42 @@ const LoginComp = () => {
         setLastError("");
         toast.success("login successfull ...!");
       } else {
-        setLastError("*. password is required!");
+        setLastError(
+          <div>
+            <div>password: </div>
+            <ul className="flex flex-col gap-2">
+              <li className="flex gap-1">
+                {" "}
+                <RiArrowRightSLine />
+                <span>should be 8-24 characters long</span>
+              </li>
+              <li className="flex gap-1">
+                {" "}
+                <RiArrowRightSLine />
+                <span>should contain only letters(upper and lower case)</span>
+              </li>
+              <li className="flex gap-1">
+                {" "}
+                <RiArrowRightSLine />
+                <span>should contain only numbers</span>
+              </li>
+            </ul>
+          </div>
+        );
       }
     } else {
-      setLastError("*. email is required!");
+      setLastError(
+        <div>
+          <div>email: </div>
+          <ul className="flex flex-col gap-2">
+            <li className="flex gap-1">
+              {" "}
+              <RiArrowRightSLine />
+              <span>structure is incorrect!</span>
+            </li>
+          </ul>
+        </div>
+      );
     }
   };
 

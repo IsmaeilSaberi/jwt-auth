@@ -7,7 +7,7 @@ const roleSlice = createSlice({
     userToLogout: (state) => {
       state.value = 5;
     },
-    userToUsual: (state) => {
+    userToNormal: (state) => {
       state.value = 3;
     },
     userToAdmin: (state) => {
@@ -16,5 +16,5 @@ const roleSlice = createSlice({
   },
 });
 
-export const { userToLogout, userToUsual, userToAdmin } = roleSlice.actions;
+export const { userToLogout, userToNormal, userToAdmin } = roleSlice.actions;
 export default roleSlice.reducer;

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { RiArrowRightSLine } from "react-icons/ri";
 
 const RegisterComp = () => {
   const usernameRef = useRef();
@@ -53,27 +54,126 @@ const RegisterComp = () => {
                 setLastError("");
                 toast.info("please wait ...!");
               } else {
-                setLastError("*. password and repassword should be the same!");
+                setLastError(
+                  <div>
+                    <div>repassword: </div>
+                    <ul className="flex flex-col gap-2">
+                      <li className="flex gap-1">
+                        {" "}
+                        <RiArrowRightSLine />
+                        <span>should be equal to password!</span>
+                      </li>
+                    </ul>
+                  </div>
+                );
               }
             } else {
               setLastError(
-                "*. password should be 8-24 characters long and contain only letters(upper and lower case) and numbers!"
+                <div>
+                  <div>password: </div>
+                  <ul className="flex flex-col gap-2">
+                    <li className="flex gap-1">
+                      {" "}
+                      <RiArrowRightSLine />
+                      <span>should be 8-24 characters long</span>
+                    </li>
+                    <li className="flex gap-1">
+                      {" "}
+                      <RiArrowRightSLine />
+                      <span>
+                        should contain only letters(upper and lower case)
+                      </span>
+                    </li>
+                    <li className="flex gap-1">
+                      {" "}
+                      <RiArrowRightSLine />
+                      <span>should contain only numbers</span>
+                    </li>
+                  </ul>
+                </div>
               );
             }
           } else {
-            setLastError("*. email structure is incorrect!");
+            setLastError(
+              <div>
+                <div>email: </div>
+                <ul className="flex flex-col gap-2">
+                  <li className="flex gap-1">
+                    {" "}
+                    <RiArrowRightSLine />
+                    <span>structure is incorrect!</span>
+                  </li>
+                </ul>
+              </div>
+            );
           }
         } else {
-          setLastError("*. phone should be 11 numbers and start with 0!");
+          setLastError(
+            <div>
+              <div>phone: </div>
+              <ul className="flex flex-col gap-2">
+                <li className="flex gap-1">
+                  {" "}
+                  <RiArrowRightSLine />
+                  <span>should be 11 numbers</span>
+                </li>
+                <li className="flex gap-1">
+                  {" "}
+                  <RiArrowRightSLine />
+                  <span>should start with 0</span>
+                </li>
+              </ul>
+            </div>
+          );
         }
       } else {
         setLastError(
-          "*. displayname should be 8-30 characters long and contain only letters(upper and lower case) and numbers!"
+          <div>
+            <div>displayname: </div>
+            <ul className="flex flex-col gap-2">
+              <li className="flex gap-1">
+                {" "}
+                <RiArrowRightSLine />
+                <span>should be 8-30 characters long</span>
+              </li>
+              <li className="flex gap-1">
+                {" "}
+                <RiArrowRightSLine />
+                <span>
+                  should be contain only letters(upper and lower case)
+                </span>
+              </li>
+              <li className="flex gap-1">
+                {" "}
+                <RiArrowRightSLine />
+                <span>should be contain only numbers</span>
+              </li>
+            </ul>
+          </div>
         );
       }
     } else {
       setLastError(
-        "*. username should be 8-30 characters long and contain only letters(upper and lower case) and numbers!"
+        <div>
+          <div>username: </div>
+          <ul className="flex flex-col gap-2">
+            <li className="flex gap-1">
+              {" "}
+              <RiArrowRightSLine />
+              <span>should be 8-30 characters long</span>
+            </li>
+            <li className="flex gap-1">
+              {" "}
+              <RiArrowRightSLine />
+              <span>should be contain only letters(upper and lower case)</span>
+            </li>
+            <li className="flex gap-1">
+              {" "}
+              <RiArrowRightSLine />
+              <span>should be contain only numbers</span>
+            </li>
+          </ul>
+        </div>
       );
     }
   };
