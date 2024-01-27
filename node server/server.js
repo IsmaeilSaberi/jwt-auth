@@ -18,21 +18,16 @@ app.get("/", (req, res) => {
   res.send("Welcome to root URL of Server");
 });
 
+// ROUTEs
+const UserRoutes = require("./routes/UserRoutes");
+app.use("/api", UserRoutes);
+
 const dbUrl = process.env.MONGO_URL;
 const port = process.env.PORT;
-
-app.listen(port, (error) => {
-  if (!error)
-    console.log(
-      "Server is Successfully Running, and App is listening on port " + port
-    );
-  else console.log("Error occurred, server can't start", error);
-});
 
 mongoose
   .connect(dbUrl)
   .then((data) => {
-    console.log("db connected!");
     app.listen(port);
   })
   .catch((err) => console.log("error in connecting to db!"));
