@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express();
 
-const UserCtrl = require("../controllers/UserControllers");
+const UserCtrl = require("../controllers/UserCtrl");
 
 router.get("/users", UserCtrl.getAllUsers);
 router.get("/get-one-user/:id", UserCtrl.getOneUser);
