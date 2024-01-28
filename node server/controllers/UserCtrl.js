@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -56,6 +58,48 @@ const createUser = async (req, res) => {
         .status(401)
         .json({ msg: "repassword is not match with password!" });
     }
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 15);
+
+    const emailRandNumber = Math.floor(
+      Math.pow(10, 9) + Math.random() * 9 * Math.pow(10, 9)
+    );
+    const phoneRandNumber = Math.floor(
+      Math.pow(10, 9) + Math.random() * 9 * Math.pow(10, 9)
+    );
+
+    const userData = {
+      username: req.body.username,
+      displayname: req.body.displayname,
+      email: req.body.email,
+      phone: req.body.phone,
+      password: hashedPassword,
+      role: 3,
+      joinedAt: req.body.joinedAt,
+      email_log_num: emailRandNumber,
+      email_confirmed: false,
+      phone_log_num: phoneRandNumber,
+      phone_confirmed: false,
+    };
+
+    const newUser = await User.create(userData);
+
+    const token = jwt.sign(
+      {
+        _id: newUser._id,
+        username: newUser.username,
+      },
+      process.env.TOKEN_SECRET
+    );
+
+    res.status(200).json({
+      msg: "ok",
+      loged: 1,
+      email_confirmed: -1,
+      phone_confirmed: -1,
+      role: 3,
+      auth_token: token,
+    });
   } catch (error) {
     console.log(err);
     res.status(400).json({ msg: "an error in creating user!" });
