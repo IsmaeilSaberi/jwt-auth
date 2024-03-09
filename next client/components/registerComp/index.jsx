@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { RiArrowRightSLine } from "react-icons/ri";
+import axios from "axios";
 
 const RegisterComp = () => {
   const usernameRef = useRef();
@@ -23,160 +24,177 @@ const RegisterComp = () => {
       email: emailRef.current.value,
       password: passwordRef.current.value,
       repassword: repasswordRef.current.value,
+      joinedAt: new Date().toLocaleDateString("fa-IR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
     // USERNAME REGEX
-    if (
-      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,30}$/.test(formData.username)
-    ) {
-      // DISPLAYNAME REGEX
-      if (
-        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,30}$/.test(
-          formData.displayname
-        )
-      ) {
-        //  PHONE REGEX
-        if (/^[0][0-9]{10}$/.test(formData.phone)) {
-          // EMAIL REGEX
-          if (
-            /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(
-              formData.email
-            )
-          ) {
-            // PASSWORD REGEX
-            if (
-              /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,24}$/.test(
-                formData.password
-              )
-            ) {
-              // REPASSWORD REGEX
-              if (formData.password == formData.repassword) {
-                setLastError("");
-                toast.info("please wait ...!");
-              } else {
-                setLastError(
-                  <div>
-                    <div>repassword: </div>
-                    <ul className="flex flex-col gap-2">
-                      <li className="flex gap-1">
-                        {" "}
-                        <RiArrowRightSLine />
-                        <span>should be equal to password!</span>
-                      </li>
-                    </ul>
-                  </div>
-                );
-              }
-            } else {
-              setLastError(
-                <div>
-                  <div>password: </div>
-                  <ul className="flex flex-col gap-2">
-                    <li className="flex gap-1">
-                      {" "}
-                      <RiArrowRightSLine />
-                      <span>should be 8-24 characters long</span>
-                    </li>
-                    <li className="flex gap-1">
-                      {" "}
-                      <RiArrowRightSLine />
-                      <span>
-                        should contain only letters(upper and lower case)
-                      </span>
-                    </li>
-                    <li className="flex gap-1">
-                      {" "}
-                      <RiArrowRightSLine />
-                      <span>should contain only numbers</span>
-                    </li>
-                  </ul>
-                </div>
-              );
-            }
-          } else {
-            setLastError(
-              <div>
-                <div>email: </div>
-                <ul className="flex flex-col gap-2">
-                  <li className="flex gap-1">
-                    {" "}
-                    <RiArrowRightSLine />
-                    <span>structure is incorrect!</span>
-                  </li>
-                </ul>
-              </div>
-            );
-          }
-        } else {
-          setLastError(
-            <div>
-              <div>phone: </div>
-              <ul className="flex flex-col gap-2">
-                <li className="flex gap-1">
-                  {" "}
-                  <RiArrowRightSLine />
-                  <span>should be 11 numbers</span>
-                </li>
-                <li className="flex gap-1">
-                  {" "}
-                  <RiArrowRightSLine />
-                  <span>should start with 0</span>
-                </li>
-              </ul>
-            </div>
-          );
-        }
-      } else {
-        setLastError(
-          <div>
-            <div>displayname: </div>
-            <ul className="flex flex-col gap-2">
-              <li className="flex gap-1">
-                {" "}
-                <RiArrowRightSLine />
-                <span>should be 8-30 characters long</span>
-              </li>
-              <li className="flex gap-1">
-                {" "}
-                <RiArrowRightSLine />
-                <span>
-                  should be contain only letters(upper and lower case)
-                </span>
-              </li>
-              <li className="flex gap-1">
-                {" "}
-                <RiArrowRightSLine />
-                <span>should be contain only numbers</span>
-              </li>
-            </ul>
-          </div>
-        );
-      }
-    } else {
-      setLastError(
-        <div>
-          <div>username: </div>
-          <ul className="flex flex-col gap-2">
-            <li className="flex gap-1">
-              {" "}
-              <RiArrowRightSLine />
-              <span>should be 8-30 characters long</span>
-            </li>
-            <li className="flex gap-1">
-              {" "}
-              <RiArrowRightSLine />
-              <span>should be contain only letters(upper and lower case)</span>
-            </li>
-            <li className="flex gap-1">
-              {" "}
-              <RiArrowRightSLine />
-              <span>should be contain only numbers</span>
-            </li>
-          </ul>
-        </div>
-      );
-    }
+    // if (
+    //   /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,30}$/.test(formData.username)
+    // ) {
+    //   // DISPLAYNAME REGEX
+    //   if (
+    //     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,30}$/.test(
+    //       formData.displayname
+    //     )
+    //   ) {
+    //     //  PHONE REGEX
+    //     if (/^[0][0-9]{10}$/.test(formData.phone)) {
+    //       // EMAIL REGEX
+    //       if (
+    //         /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(
+    //           formData.email
+    //         )
+    //       ) {
+    //         // PASSWORD REGEX
+    //         if (
+    //           /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,24}$/.test(
+    //             formData.password
+    //           )
+    //         ) {
+    //           // REPASSWORD REGEX
+    //           if (formData.password == formData.repassword) {
+    setLastError("");
+    toast.info("please wait ...!");
+    axios
+      .post(`${process.env.NEXT_PUBLIC_SERVER_URL}new-user`, formData)
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        const errMsg = err?.response?.data?.msg
+          ? err.response.data.msg
+          : "error in creating user!";
+        toast.error(errMsg);
+        console.log(err);
+      });
   };
+  //             else {
+  //               setLastError(
+  //                 <div>
+  //                   <div>repassword: </div>
+  //                   <ul className="flex flex-col gap-2">
+  //                     <li className="flex gap-1">
+  //                       {" "}
+  //                       <RiArrowRightSLine />
+  //                       <span>should be equal to password!</span>
+  //                     </li>
+  //                   </ul>
+  //                 </div>
+  //               );
+  //             }
+  //           } else {
+  //             setLastError(
+  //               <div>
+  //                 <div>password: </div>
+  //                 <ul className="flex flex-col gap-2">
+  //                   <li className="flex gap-1">
+  //                     {" "}
+  //                     <RiArrowRightSLine />
+  //                     <span>should be 8-24 characters long</span>
+  //                   </li>
+  //                   <li className="flex gap-1">
+  //                     {" "}
+  //                     <RiArrowRightSLine />
+  //                     <span>
+  //                       should contain only letters(upper and lower case)
+  //                     </span>
+  //                   </li>
+  //                   <li className="flex gap-1">
+  //                     {" "}
+  //                     <RiArrowRightSLine />
+  //                     <span>should contain only numbers</span>
+  //                   </li>
+  //                 </ul>
+  //               </div>
+  //             );
+  //           }
+  //         } else {
+  //           setLastError(
+  //             <div>
+  //               <div>email: </div>
+  //               <ul className="flex flex-col gap-2">
+  //                 <li className="flex gap-1">
+  //                   {" "}
+  //                   <RiArrowRightSLine />
+  //                   <span>structure is incorrect!</span>
+  //                 </li>
+  //               </ul>
+  //             </div>
+  //           );
+  //         }
+  //       } else {
+  //         setLastError(
+  //           <div>
+  //             <div>phone: </div>
+  //             <ul className="flex flex-col gap-2">
+  //               <li className="flex gap-1">
+  //                 {" "}
+  //                 <RiArrowRightSLine />
+  //                 <span>should be 11 numbers</span>
+  //               </li>
+  //               <li className="flex gap-1">
+  //                 {" "}
+  //                 <RiArrowRightSLine />
+  //                 <span>should start with 0</span>
+  //               </li>
+  //             </ul>
+  //           </div>
+  //         );
+  //       }
+  //     } else {
+  //       setLastError(
+  //         <div>
+  //           <div>displayname: </div>
+  //           <ul className="flex flex-col gap-2">
+  //             <li className="flex gap-1">
+  //               {" "}
+  //               <RiArrowRightSLine />
+  //               <span>should be 8-30 characters long</span>
+  //             </li>
+  //             <li className="flex gap-1">
+  //               {" "}
+  //               <RiArrowRightSLine />
+  //               <span>
+  //                 should be contain only letters(upper and lower case)
+  //               </span>
+  //             </li>
+  //             <li className="flex gap-1">
+  //               {" "}
+  //               <RiArrowRightSLine />
+  //               <span>should be contain only numbers</span>
+  //             </li>
+  //           </ul>
+  //         </div>
+  //       );
+  //     }
+  //   } else {
+  //     setLastError(
+  //       <div>
+  //         <div>username: </div>
+  //         <ul className="flex flex-col gap-2">
+  //           <li className="flex gap-1">
+  //             {" "}
+  //             <RiArrowRightSLine />
+  //             <span>should be 8-30 characters long</span>
+  //           </li>
+  //           <li className="flex gap-1">
+  //             {" "}
+  //             <RiArrowRightSLine />
+  //             <span>should be contain only letters(upper and lower case)</span>
+  //           </li>
+  //           <li className="flex gap-1">
+  //             {" "}
+  //             <RiArrowRightSLine />
+  //             <span>should be contain only numbers</span>
+  //           </li>
+  //         </ul>
+  //       </div>
+  //     );
+  //   }
+  // };
 
   return (
     <div className="flex flex-col gap-4 justify-center items-center p-8 rounded w-96">

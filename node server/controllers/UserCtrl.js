@@ -53,7 +53,7 @@ const createUser = async (req, res) => {
     ) {
       return res.status(401).json({ msg: "password structure is wrong!" });
     }
-    if (formData.password != formData.repassword) {
+    if (req.body.password != req.body.repassword) {
       return res
         .status(401)
         .json({ msg: "repassword is not match with password!" });
@@ -101,7 +101,7 @@ const createUser = async (req, res) => {
       auth_token: token,
     });
   } catch (error) {
-    console.log(err);
+    console.log(error);
     res.status(400).json({ msg: "an error in creating user!" });
   }
 };

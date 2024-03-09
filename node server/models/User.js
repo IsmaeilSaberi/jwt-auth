@@ -35,7 +35,6 @@ const UserSchema = new mongoose.Schema({
   },
   email_log_num: {
     type: Number,
-    enum: [1, 3, 5],
   },
   email_confirmed: {
     type: Boolean,
@@ -43,7 +42,6 @@ const UserSchema = new mongoose.Schema({
   },
   phone_log_num: {
     type: Number,
-    enum: [1, 3, 5],
   },
   phone_confirmed: {
     type: Boolean,
