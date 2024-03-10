@@ -59,6 +59,22 @@ const createUser = async (req, res) => {
         .json({ msg: "repassword is not match with password!" });
     }
 
+    // EMAIL AND USERNAME AND PHONE UNIQUE
+    const foundEmail = await User.findOne({ email: req.body.email });
+    if (foundEmail) {
+      return res.status(401).json({ msg: "please enter another email ..." });
+    }
+
+    const foundPhone = await User.findOne({ phone: req.body.phone });
+    if (foundPhone) {
+      return res.status(401).json({ msg: "please enter another phone ..." });
+    }
+
+    const foundUsername = await User.findOne({ username: req.body.username });
+    if (foundUsername) {
+      return res.status(401).json({ msg: "please enter another username ..." });
+    }
+
     const hashedPassword = await bcrypt.hash(req.body.password, 15);
 
     const emailRandNumber = Math.floor(

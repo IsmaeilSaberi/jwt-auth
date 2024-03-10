@@ -3,31 +3,35 @@ const mongoose = require("mongoose");
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
-    min: [8, "نام کاربری باید حداقل 8 کاراکتر باشد ..."],
-    max: [30, "نام کاربری باید حداکثر 30 کاراکتر باشد ..."],
-    unique: [true, "لطفا نام کاربری دیگری انتخاب کنید ..."],
+    unique: true,
+    required: true,
   },
-  dispalyname: {
+  displayname: {
     type: String,
-    min: [8, "نام نمایشی باید حداقل 8 کاراکتر باشد ..."],
-    max: [30, "نام نمایشی باید حداکثر 30 کاراکتر باشد ..."],
+    required: true,
   },
   email: {
     type: String,
-    required: [true, "ایمیل وارد نشده است ..."],
-    unique: [true, "لطفا ایمیل دیگری انتخاب کنید ..."],
+    required: true,
+    unique: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+    unique: true,
   },
   password: {
     type: String,
-    min: [8, "رمز عبور باید حداقل 8 کاراکتر باشد ..."],
-    max: [24, "رمز عبور باید حداکثر 30 کاراکتر باشد ..."],
+    required: true,
   },
   role: {
     type: Number,
     enum: [1, 3, 5],
+    required: true,
   },
   joinedAt: {
     type: String,
+    required: true,
     default: new Date().toLocaleDateString("fa-IR", {
       hour: "2-digit",
       minute: "2-digit",
@@ -35,17 +39,21 @@ const UserSchema = new mongoose.Schema({
   },
   email_log_num: {
     type: Number,
+    required: true,
   },
   email_confirmed: {
     type: Boolean,
     default: false,
+    required: true,
   },
   phone_log_num: {
     type: Number,
+    required: true,
   },
   phone_confirmed: {
     type: Boolean,
     default: false,
+    required: true,
   },
 });
 
