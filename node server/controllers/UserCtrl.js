@@ -230,8 +230,8 @@ const cookieToUser = async (req, res) => {
       phone_confirmed: userData.phone_confirmed,
       loged: 1,
     };
-    rs.status(200).json({ msg: "ok", data: sendingData });
-  } catch (error) {
+    res.status(200).json({ msg: "ok", data: sendingData });
+  } catch (err) {
     console.log(err);
     res.status(400).json({ msg: "an error in sending register email!" });
   }

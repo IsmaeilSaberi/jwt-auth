@@ -4,31 +4,56 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useState } from "react";
 import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
 
 const ProductBox = () => {
   const [authToken, setauthToken] = useState(Cookies.get("auth_token"));
+
+  const logedValue = useSelector((store) => store.loged.value);
+  const emailConfirmedValue = useSelector(
+    (store) => store.emailConfirmed.value
+  );
+  const phoneConfirmedValue = useSelector(
+    (store) => store.phoneConfirmed.value
+  );
 
   const submitter = () => {
     const formData = {
       product_id: "1234",
     };
-    axios
-      .post(`${process.env.NEXT_PUBLIC_SERVER_URL}add-to-cart`, formData, {
-        headers: { auth_token: authToken },
-      })
-      .then((data) => {
-        const msg = data.data?.msg
-          ? data.data.msg
-          : "successfully added to cart!";
-        toast.success(msg);
-      })
-      .catch((err) => {
-        console.log(err);
-        const errorMsg = err.response?.data?.msg
-          ? err.response.data.msg
-          : "Error";
-        toast.error(errorMsg);
-      });
+    if (logedValue == -1) {
+      toast.error("please login!");
+    } else {
+      if (emailConfirmedValue == -1) {
+        toast.error("please confirm your email!");
+      } else {
+        if (phoneConfirmedValue == -1) {
+          toast.error("please confirm your phone!");
+        } else {
+          axios
+            .post(
+              `${process.env.NEXT_PUBLIC_SERVER_URL}add-to-cart`,
+              formData,
+              {
+                headers: { auth_token: authToken },
+              }
+            )
+            .then((data) => {
+              const msg = data.data?.msg
+                ? data.data.msg
+                : "successfully added to cart!";
+              toast.success(msg);
+            })
+            .catch((err) => {
+              console.log(err);
+              const errorMsg = err.response?.data?.msg
+                ? err.response.data.msg
+                : "Error";
+              toast.error(errorMsg);
+            });
+        }
+      }
+    }
   };
 
   return (
