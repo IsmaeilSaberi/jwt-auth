@@ -247,6 +247,16 @@ const sendRegisterEmail = async (req, res) => {
 };
 module.exports.sendRegisterEmail = sendRegisterEmail;
 
+const addToCart = async (req, res) => {
+  try {
+    res.status(200).json({ msg: "product added to user's cart!" });
+  } catch (error) {
+    console.log(err);
+    res.status(400).json({ msg: "an error in sending register phone!" });
+  }
+};
+module.exports.addToCart = addToCart;
+
 const sendRegisterPhone = async (req, res) => {
   try {
   } catch (error) {

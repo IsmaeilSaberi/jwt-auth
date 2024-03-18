@@ -28,7 +28,7 @@ const LoginComp = () => {
       password: passwordRef.current.value,
     };
 
-    if (formData.itemOne.length == 11 && formData.itemOne.startsWith(0)) {
+    if (!formData.itemOne.includes("@")) {
       // PHONE REGEX
       if (/^[0][0-9]{10}$/.test(formData.itemOne)) {
         // PASSWORD REGEX

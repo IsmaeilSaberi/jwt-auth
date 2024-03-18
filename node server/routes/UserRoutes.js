@@ -12,5 +12,6 @@ router.post("/login-user", UserCtrl.loginUser);
 router.post("/send-register-email", UserCtrl.sendRegisterEmail);
 router.post("/send-register-phone", UserCtrl.sendRegisterPhone);
 
-router.post("/cookie-to-user", UserExist, UserCtrl.cookieToUser);
+router.get("/cookie-to-user", UserExist, UserCtrl.cookieToUser);
+router.post("/add-to-cart", UserExist, UserCtrl.addToCart);
 module.exports = router;
