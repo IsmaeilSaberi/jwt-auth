@@ -2,12 +2,12 @@
 import { useremailConfirmedFalse } from "@/store/slices/emailConfirmedSlice";
 import { userLogedTrue } from "@/store/slices/logedSlice";
 import { userPhoneConfirmedFalse } from "@/store/slices/phoneConfirmedSlice";
-import { userToNormal } from "@/store/slices/roleSlice";
+import { userToNormal, userToAdmin } from "@/store/slices/roleSlice";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -20,6 +20,13 @@ const LoginComp = () => {
 
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const [cookieForRedirectFlag, setcookieForRedirectFlag] = useState(-1);
+  useEffect(() => {
+    if (cookieForRedirectFlag == 1) {
+      router.push("/account");
+    }
+  }, [cookieForRedirectFlag]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -120,14 +127,18 @@ const LoginComp = () => {
           axios
             .post(`${process.env.NEXT_PUBLIC_SERVER_URL}login-user`, formData)
             .then((data) => {
-              dispatch(userToNormal());
+              data.data.role == 3
+                ? dispatch(userToNormal())
+                : dispatch(userToAdmin());
+
               dispatch(userPhoneConfirmedFalse());
               dispatch(useremailConfirmedFalse());
               dispatch(userLogedTrue());
               Cookies.set("auth_token", data.data.auth_token, {
                 expires: 30,
               });
-              router.push("/account");
+              setcookieForRedirectFlag(1);
+
               toast.success("You loged in successfully!");
             })
             .catch((err) => {
