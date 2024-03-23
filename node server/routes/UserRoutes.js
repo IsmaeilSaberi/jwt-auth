@@ -3,9 +3,10 @@ const router = express();
 
 const UserCtrl = require("../controllers/UserCtrl");
 const UserExist = require("../middlewares/userExist");
+const userExist = require("../middlewares/userExist");
 
 router.get("/users", UserCtrl.getAllUsers);
-router.get("/get-one-user/:id", UserCtrl.getOneUser);
+router.get("/get-one-user", UserExist, UserCtrl.getOneUser);
 router.post("/new-user", UserCtrl.createUser);
 router.post("/login-user", UserCtrl.loginUser);
 

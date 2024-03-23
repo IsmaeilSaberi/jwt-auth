@@ -15,7 +15,7 @@ module.exports.getAllUsers = getAllUsers;
 
 const getOneUser = async (req, res) => {
   try {
-    const theUser = await User.findById(req.params.id);
+    const theUser = await User.findById(req.user._id);
     res.status(200).json({ msg: "ok!", data: theUser });
   } catch (error) {
     console.log(err);
