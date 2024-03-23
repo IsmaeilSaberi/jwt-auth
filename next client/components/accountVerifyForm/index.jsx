@@ -2,6 +2,7 @@
 import { useRef, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 const AccountVerifyForms = () => {
   const [authToken, setauthToken] = useState(Cookies.get("auth_token"));
@@ -9,23 +10,52 @@ const AccountVerifyForms = () => {
   const emailVerifyCodeRef = useRef();
   const phoneVerifyCodeRef = useRef();
 
-  const verifyEmail = () => {
-    const formData = {
-      code: emailVerifyCodeRef.current.value,
-    };
+  const sendVerifyEmail = () => {
     axios
-      .post(`${process.env.NEXT_PUBLIC_SERVER_URL}`, formData, {
+      .get(`${process.env.NEXT_PUBLIC_SERVER_URL}send-register-email`, {
         headers: { auth_token: authToken },
       })
       .then((data) => {
-        console.log(data.data);
+        const msg = data.data ? data.data.msg : "email sended";
+        toast.success(msg);
       })
       .catch((err) => {
-        console.log(err);
+        const msg =
+          err.response && err.response.data
+            ? err.response.data
+            : "error happend";
+        toast.error(msg);
       });
   };
 
-  const sendVerifyEmail = () => {};
+  const verifyEmail = (e) => {
+    e.preventDefault();
+    const formData = {
+      emailCode: emailVerifyCodeRef.current.value,
+    };
+    axios
+      .post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}confirm-user-email`,
+        formData,
+        {
+          headers: { auth_token: authToken },
+        }
+      )
+      .then((data) => {
+        const msg = data.data ? data.data.msg : "your email is active now!";
+        toast.success(msg);
+        emailVerifyCodeRef.current.value = "";
+      })
+      .catch((err) => {
+        const msg =
+          err.response && err.response.data
+            ? err.response.data
+            : "code is wrong!";
+        toast.error(msg);
+      });
+  };
+
+  const sendVerifyPhoneMsg = () => {};
 
   const verifyPhoneMessage = () => {
     const formData = {
@@ -43,10 +73,9 @@ const AccountVerifyForms = () => {
       });
   };
 
-  const sendVerifyPhoneMsg = () => {};
-
   return (
     <div className="flex justify-between items-start gap-20 w-full p-8">
+      {}
       <div className="flex flex-col gap-4 w-full">
         <div className="flex justify-center items-center gap-4">
           <h3>verify email</h3>

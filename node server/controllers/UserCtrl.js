@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -240,12 +241,71 @@ module.exports.cookieToUser = cookieToUser;
 
 const sendRegisterEmail = async (req, res) => {
   try {
+    const userId = req.user._id;
+    const userFullData = await User.findById(userId);
+
+    const emailConfirmCode = userFullData.email_log_num;
+    const goalUserEmail = userFullData.email;
+
+    const MAIN_MAIL = process.env.MAIN_MAIL;
+    const MAIL_HOST = process.env.MAIL_HOST;
+    const MAIL_PORT = process.env.MAIL_PORT;
+    const MAIL_USER = process.env.MAIL_USER;
+    const MAIL_PASSWORD = process.env.MAIL_PASSWORD;
+
+    const transporter = nodemailer.createTransport({
+      host: MAIL_HOST,
+      port: MAIL_PORT,
+      tls: true,
+      auth: {
+        user: MAIL_USER,
+        pass: MAIL_PASSWORD,
+      },
+    });
+
+    transporter
+      .sendMail({
+        from: MAIN_MAIL,
+        to: goalUserEmail,
+        subject: "Register Email for Authentication!",
+        html: `<h1>Your confirm Email code is: ${emailConfirmCode}</h1>`,
+      })
+      .then(() => res.status(200).json({ msg: "please check your email!" }))
+      .catch((err) => {
+        console.log(err);
+        res.status(400).json({ msg: "an error in sending register email!" });
+      });
   } catch (error) {
     console.log(err);
     res.status(400).json({ msg: "an error in sending register email!" });
   }
 };
 module.exports.sendRegisterEmail = sendRegisterEmail;
+
+const confirmUserEmail = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const userFullData = await User.findById(userId);
+
+    const userEmailCode = userFullData.email_log_num;
+    const frontendCode = req.body.emailCode;
+
+    if (userEmailCode == frontendCode) {
+      const newData = {
+        email_confirmed: true,
+      };
+      await User.findByIdAndUpdate(userId, newData, { new: true });
+
+      res.status(200).json({ msg: "Your email confirmed successfully!" });
+    } else {
+      res.status(400).json({ msg: "your code is wrong!" });
+    }
+  } catch (error) {
+    console.log(err);
+    res.status(400).json({ msg: "an error in backend!" });
+  }
+};
+module.exports.confirmUserEmail = confirmUserEmail;
 
 const addToCart = async (req, res) => {
   try {
