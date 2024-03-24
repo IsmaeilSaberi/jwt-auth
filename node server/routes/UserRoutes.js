@@ -13,7 +13,7 @@ router.get("/send-register-email", UserExist, UserCtrl.sendRegisterEmail);
 router.get("/send-register-phone", UserExist, UserCtrl.sendRegisterPhone);
 
 router.post("/confirm-user-email", UserExist, UserCtrl.confirmUserEmail);
-router.post("/confirm-user-phone", UserExist, UserCtrl.sendRegisterPhone);
+router.post("/confirm-user-phone", UserExist, UserCtrl.confirmUserPhone);
 
 router.get("/cookie-to-user", UserExist, UserCtrl.cookieToUser);
 router.post("/add-to-cart", UserExist, UserCtrl.addToCart);

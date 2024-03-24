@@ -2,6 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const axios = require("axios");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -282,6 +283,44 @@ const sendRegisterEmail = async (req, res) => {
 };
 module.exports.sendRegisterEmail = sendRegisterEmail;
 
+const sendRegisterPhone = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const userFullData = await User.findById(userId);
+
+    const phoneConfirmCode = userFullData.phone_log_num;
+    const goalUserPhone = userFullData.phone;
+
+    const formData = JSON.stringify({
+      mobile: `${goalUserPhone}`,
+      templateId: 331494,
+      parameters: [{ name: "code", value: `${phoneConfirmCode}` }],
+    });
+
+    const theUrl = "https://api.sms.ir/v1/send/verify";
+
+    axios
+      .post(theUrl, formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "text/plain",
+          "x-api-key": `${process.env.SMS_API_KEY}`,
+        },
+      })
+      .then((data) => {
+        res.status(200).json({ msg: "please check your mobile ...!" });
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+        res.status(400).json({ msg: "error in sending SMS!" });
+      });
+  } catch (error) {
+    console.log(err);
+    res.status(400).json({ msg: "an error in sending register phone!" });
+  }
+};
+module.exports.sendRegisterPhone = sendRegisterPhone;
+
 const confirmUserEmail = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -307,6 +346,31 @@ const confirmUserEmail = async (req, res) => {
 };
 module.exports.confirmUserEmail = confirmUserEmail;
 
+const confirmUserPhone = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const userFullData = await User.findById(userId);
+
+    const userPhoneCode = userFullData.phone_log_num;
+    const frontendCode = req.body.phoneCode;
+
+    if (userPhoneCode == frontendCode) {
+      const newData = {
+        phone_confirmed: true,
+      };
+      await User.findByIdAndUpdate(userId, newData, { new: true });
+
+      res.status(200).json({ msg: "Your phone confirmed successfully!" });
+    } else {
+      res.status(400).json({ msg: "your code is wrong!" });
+    }
+  } catch (error) {
+    console.log(err);
+    res.status(400).json({ msg: "an error in backend!" });
+  }
+};
+module.exports.confirmUserPhone = confirmUserPhone;
+
 const addToCart = async (req, res) => {
   try {
     res.status(200).json({ msg: "product added to user's cart!" });
@@ -316,12 +380,3 @@ const addToCart = async (req, res) => {
   }
 };
 module.exports.addToCart = addToCart;
-
-const sendRegisterPhone = async (req, res) => {
-  try {
-  } catch (error) {
-    console.log(err);
-    res.status(400).json({ msg: "an error in sending register phone!" });
-  }
-};
-module.exports.sendRegisterPhone = sendRegisterPhone;

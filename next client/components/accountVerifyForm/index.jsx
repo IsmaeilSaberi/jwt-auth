@@ -28,6 +28,24 @@ const AccountVerifyForms = () => {
       });
   };
 
+  const sendVerifyPhone = () => {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_SERVER_URL}send-register-phone`, {
+        headers: { auth_token: authToken },
+      })
+      .then((data) => {
+        const msg = data.data ? data.data.msg : "phone message sended";
+        toast.success(msg);
+      })
+      .catch((err) => {
+        const msg =
+          err.response && err.response.data
+            ? err.response.data
+            : "error happend";
+        toast.error(msg);
+      });
+  };
+
   const verifyEmail = (e) => {
     e.preventDefault();
     const formData = {
@@ -49,27 +67,36 @@ const AccountVerifyForms = () => {
       .catch((err) => {
         const msg =
           err.response && err.response.data
-            ? err.response.data
+            ? err.response.data.msg
             : "code is wrong!";
         toast.error(msg);
       });
   };
 
-  const sendVerifyPhoneMsg = () => {};
-
-  const verifyPhoneMessage = () => {
+  const verifyPhone = (e) => {
+    e.preventDefault();
     const formData = {
-      code: phoneVerifyCodeRef.current.value,
+      phoneCode: phoneVerifyCodeRef.current.value,
     };
     axios
-      .post(`${process.env.NEXT_PUBLIC_SERVER_URL}`, formData, {
-        headers: { auth_token: authToken },
-      })
+      .post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}confirm-user-phone`,
+        formData,
+        {
+          headers: { auth_token: authToken },
+        }
+      )
       .then((data) => {
-        console.log(data.data);
+        const msg = data.data ? data.data.msg : "your phone is active now!";
+        toast.success(msg);
+        phoneVerifyCodeRef.current.value = "";
       })
       .catch((err) => {
-        console.log(err);
+        const msg =
+          err.response && err.response.data
+            ? err.response.data.msg
+            : "code is wrong!";
+        toast.error(msg);
       });
   };
 
@@ -108,14 +135,14 @@ const AccountVerifyForms = () => {
         <div className="flex justify-center items-center gap-4">
           <h3>verify phone</h3>
           <button
-            onClick={() => sendVerifyPhoneMsg()}
+            onClick={() => sendVerifyPhone()}
             className="bg-blue-500 transition-all duration-200 hover:bg-blue-600 rounded text-sm text-white p-1"
           >
             send phone message
           </button>
         </div>
         <form
-          onSubmit={verifyPhoneMessage}
+          onSubmit={verifyPhone}
           className="flex flex-col gap-4 justify-center items-center bg-indigo-200 border-2 rounded  w-full border-red-500 p-4"
         >
           <input
