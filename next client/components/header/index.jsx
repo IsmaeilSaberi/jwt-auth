@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { toast } from "react-toastify";
+
 import {
   useremailConfirmedTrue,
   useremailConfirmedFalse,
@@ -56,7 +56,10 @@ const Header = () => {
           : dispatch(userToLogout());
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data.clearToken);
+        err.response.data && err.response.data.clearToken
+          ? Cookies.set("auth_token", "", { expires: 0 })
+          : console.log("");
         dispatch(userLogedFalse());
         dispatch(useremailConfirmedFalse());
         dispatch(userPhoneConfirmedFalse());

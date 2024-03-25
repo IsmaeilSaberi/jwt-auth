@@ -1,11 +1,22 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+
+import { useremailConfirmedFalse } from "@/store/slices/emailConfirmedSlice";
+import { userLogedFalse } from "@/store/slices/logedSlice";
+import { userPhoneConfirmedFalse } from "@/store/slices/phoneConfirmedSlice";
+import { userToLogout } from "@/store/slices/roleSlice";
+import { useDispatch } from "react-redux";
 
 const AccountVerifyForms = () => {
   const [authToken, setauthToken] = useState(Cookies.get("auth_token"));
+
+  const [logoutState, setlogoutState] = useState(-1);
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   const emailVerifyCodeRef = useRef();
   const phoneVerifyCodeRef = useRef();
@@ -100,64 +111,88 @@ const AccountVerifyForms = () => {
       });
   };
 
+  const logouter = () => {
+    Cookies.set("auth_token", "", { expires: 0 });
+    setlogoutState(1);
+  };
+
+  useEffect(() => {
+    if (logoutState == 1) {
+      router.push("/login");
+      dispatch(userLogedFalse());
+      dispatch(useremailConfirmedFalse());
+      dispatch(userPhoneConfirmedFalse());
+      dispatch(userToLogout());
+    }
+  }, [logoutState]);
+
   return (
-    <div className="flex justify-between items-start gap-20 w-full p-8">
-      {}
-      <div className="flex flex-col gap-4 w-full">
-        <div className="flex justify-center items-center gap-4">
-          <h3>verify email</h3>
-          <button
-            onClick={() => sendVerifyEmail()}
-            className="bg-blue-500 transition-all duration-200 hover:bg-blue-600 rounded text-sm text-white p-1"
+    <div className="flex flex-col gap-4 w-full">
+      <div className="flex flex-wrap md:flex-nowrap justify-between items-start gap-20 w-full p-8">
+        <div className="flex flex-col gap-4 w-full">
+          <div className="flex justify-center items-center gap-4">
+            <h3>verify email</h3>
+            <button
+              onClick={() => sendVerifyEmail()}
+              className="bg-blue-500 transition-all duration-200 hover:bg-blue-600 rounded text-sm text-white p-1"
+            >
+              send email
+            </button>
+          </div>
+          <form
+            onSubmit={verifyEmail}
+            className="flex flex-col gap-4 justify-center items-center bg-indigo-200 border-2 rounded  w-full border-red-500 p-4"
           >
-            send email
-          </button>
+            <input
+              ref={emailVerifyCodeRef}
+              placeholder="email verify code"
+              className="p-1 rounded border-2 w-full border-transparent outline-none focus:border-indigo-600"
+              type="text"
+            />
+            <button
+              className="py-1 px-2 w-full cursor-pointer rounded border-2 border-red-500 bg-green-500 text-white hover:border-red-700"
+              type="submit"
+            >
+              verify my email
+            </button>
+          </form>
         </div>
-        <form
-          onSubmit={verifyEmail}
-          className="flex flex-col gap-4 justify-center items-center bg-indigo-200 border-2 rounded  w-full border-red-500 p-4"
-        >
-          <input
-            ref={emailVerifyCodeRef}
-            placeholder="email verify code"
-            className="p-1 rounded border-2 w-full border-transparent outline-none focus:border-indigo-600"
-            type="text"
-          />
-          <button
-            className="py-1 px-2 w-full cursor-pointer rounded border-2 border-red-500 bg-green-500 text-white hover:border-red-700"
-            type="submit"
+        <div className="flex flex-col gap-4 w-full">
+          <div className="flex justify-center items-center gap-4">
+            <h3>verify phone</h3>
+            <button
+              onClick={() => sendVerifyPhone()}
+              className="bg-blue-500 transition-all duration-200 hover:bg-blue-600 rounded text-sm text-white p-1"
+            >
+              send phone message
+            </button>
+          </div>
+          <form
+            onSubmit={verifyPhone}
+            className="flex flex-col gap-4 justify-center items-center bg-indigo-200 border-2 rounded  w-full border-red-500 p-4"
           >
-            verify my email
-          </button>
-        </form>
+            <input
+              ref={phoneVerifyCodeRef}
+              placeholder="phone verify code"
+              className="p-1 rounded border-2 w-full border-transparent outline-none focus:border-indigo-600"
+              type="text"
+            />
+            <button
+              className="py-1 px-2 w-full cursor-pointer rounded border-2 border-red-500 bg-green-500 text-white hover:border-red-700"
+              type="submit"
+            >
+              verify my phone
+            </button>
+          </form>
+        </div>
       </div>
-      <div className="flex flex-col gap-4 w-full">
-        <div className="flex justify-center items-center gap-4">
-          <h3>verify phone</h3>
-          <button
-            onClick={() => sendVerifyPhone()}
-            className="bg-blue-500 transition-all duration-200 hover:bg-blue-600 rounded text-sm text-white p-1"
-          >
-            send phone message
-          </button>
-        </div>
-        <form
-          onSubmit={verifyPhone}
-          className="flex flex-col gap-4 justify-center items-center bg-indigo-200 border-2 rounded  w-full border-red-500 p-4"
+      <div className="flex justify-start items-center p-8">
+        <button
+          onClick={() => logouter()}
+          className="bg-rose-600 rounded text-white transition-all duration-200 hover:bg-rose-700 p-2"
         >
-          <input
-            ref={phoneVerifyCodeRef}
-            placeholder="phone verify code"
-            className="p-1 rounded border-2 w-full border-transparent outline-none focus:border-indigo-600"
-            type="text"
-          />
-          <button
-            className="py-1 px-2 w-full cursor-pointer rounded border-2 border-red-500 bg-green-500 text-white hover:border-red-700"
-            type="submit"
-          >
-            verify my phone
-          </button>
-        </form>
+          log out
+        </button>
       </div>
     </div>
   );
